@@ -48,7 +48,7 @@ public class FilmController {
             if (film.getName().isBlank()) {
                 throw new ValidationException("Название фильма не может быть пустым");
             }
-            if (film.getDescription().length() >= 200) {
+            if (film.getDescription().length() >= 200 || film.getDescription().isBlank()) {
                 throw new ValidationException("Слишком длинное описание");
             }
             if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {

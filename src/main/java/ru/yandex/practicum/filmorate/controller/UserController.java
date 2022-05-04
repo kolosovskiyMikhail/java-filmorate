@@ -23,11 +23,12 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public void createUser(@RequestBody User user) {
+    public User createUser(@RequestBody User user) {
         userValidate(user);
         user.setId(id++);
         users.put(user.getId(), user);
         log.info("Пользователь добавлен");
+        return user;
     }
 
     @PutMapping("/users")
