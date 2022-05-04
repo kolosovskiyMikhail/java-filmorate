@@ -27,7 +27,7 @@ public class UserController {
         userValidate(user);
         user.setId(id++);
         users.put(user.getId(), user);
-        log.info("Пользователь добавлен");
+        log.info("Пользователь успешно добавлен");
         return user;
     }
 
