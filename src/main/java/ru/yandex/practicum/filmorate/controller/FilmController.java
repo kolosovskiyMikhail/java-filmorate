@@ -4,38 +4,37 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.expection.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @Slf4j
 public class FilmController {
-    private final List<Film> films = new ArrayList<>();
+    private final HashMap<Integer, Film> films = new HashMap<>();
+    int id = 1;
 
     @GetMapping("/films")
     public List<Film> getFilms() {
-        return films;
+        return new ArrayList<>(films.values());
     }
 
     @PostMapping("/films")
     public void createFilm(@RequestBody Film film) {
         filmValidate(film);
-        films.add(film);
+        film.setId(id++);
+        films.put(film.getId(), film);
         log.info("Фильм добавлен");
     }
 
     @PutMapping("/films")
     public void updateFilm(@RequestBody Film film) {
         filmValidate(film);
-        for (Film f : films) {
-            if (film.getId() == f.getId()) {
-                films.remove(f);
-                films.add(film);
-            }
-        }
+        films.put(film.getId(), film);
         log.info("Данные о фильме обновлены");
     }
 
@@ -49,7 +48,7 @@ public class FilmController {
             if (film.getName().isBlank()) {
                 throw new ValidationException("Название фильма не может быть пустым");
             }
-            if (film.getDescription().length() > 200) {
+            if (film.getDescription().length() >= 200) {
                 throw new ValidationException("Слишком длинное описание");
             }
             if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {

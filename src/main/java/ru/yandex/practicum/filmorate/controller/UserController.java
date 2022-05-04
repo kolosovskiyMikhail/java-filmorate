@@ -8,34 +8,32 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @Slf4j
 public class UserController {
-    private final List<User> users = new ArrayList<>();
+    private final HashMap<Integer, User> users = new HashMap<>();
+    int id = 1;
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
-        return users;
+        return new ArrayList<>(users.values());
     }
 
     @PostMapping("/users")
     public void createUser(@RequestBody User user) {
         userValidate(user);
-        users.add(user);
+        user.setId(id++);
+        users.put(user.getId(), user);
         log.info("Пользователь добавлен");
     }
 
     @PutMapping("/users")
     public void updateUser(@RequestBody User user) {
         userValidate(user);
-        for (User u : users) {
-            if (user.getId() == u.getId()) {
-                users.remove(u);
-                users.add(user);
-            }
-        }
+        users.put(user.getId(), user);
         log.info("Данные о пользователе обновлены");
     }
 
