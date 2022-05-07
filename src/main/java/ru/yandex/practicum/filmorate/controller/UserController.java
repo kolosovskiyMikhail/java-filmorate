@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.expection.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,17 +15,18 @@ import java.util.List;
 
 @RestController
 @Slf4j
-public class UserController {
+public class UserController extends AbstractController<User>{
     private final HashMap<Integer, User> users = new HashMap<>();
-    int id = 1;
 
     @GetMapping("/users")
-    public List<User> getAllUsers() {
+    @Override
+    public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
     @PostMapping("/users")
-    public User createUser(@RequestBody User user) {
+    @Override
+    public User create(@Valid @RequestBody User user) {
         userValidate(user);
         user.setId(id++);
         users.put(user.getId(), user);
@@ -32,18 +35,19 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public void updateUser(@RequestBody User user) {
+    @Override
+    public void update(@Valid @RequestBody User user) {
         userValidate(user);
         users.put(user.getId(), user);
         log.info("Данные о пользователе обновлены");
     }
 
-    public LocalDate dateFormatter (String str) {
+   public LocalDate dateFormatter (String str) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(str, formatter);
     }
 
-    public void userValidate(User user) {
+   /* public void userValidate(User user) {
         try {
             if (user.getEmail().isBlank()) {
                 throw new ValidationException("Электронная почта не может быть пустой");
@@ -51,9 +55,22 @@ public class UserController {
             if (!user.getEmail().contains("@")) {
                 throw new ValidationException("Неверно введена электронная почта");
             }
-            if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            if (user.getLogin().contains(" ")) {
                 throw new ValidationException("Неверно введен логин");
             }
+            if (dateFormatter(user.getBirthday()).isAfter(LocalDate.now())) {
+                throw new ValidationException("Дата рождения из будущего");
+            }
+            if (user.getName().isBlank()) {
+                user.setName(user.getLogin());
+            }
+        } catch (ValidationException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }*/
+
+    public void userValidate(User user) {
+        try {
             if (dateFormatter(user.getBirthday()).isAfter(LocalDate.now())) {
                 throw new ValidationException("Дата рождения из будущего");
             }

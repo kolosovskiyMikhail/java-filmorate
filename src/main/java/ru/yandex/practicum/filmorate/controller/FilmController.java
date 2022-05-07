@@ -14,25 +14,28 @@ import java.util.List;
 
 @RestController
 @Slf4j
-public class FilmController {
+public class FilmController extends AbstractController<Film> {
     private final HashMap<Integer, Film> films = new HashMap<>();
-    int id = 1;
 
     @GetMapping("/films")
-    public List<Film> getFilms() {
+    @Override
+    public List<Film> getAll() {
         return new ArrayList<>(films.values());
     }
 
     @PostMapping("/films")
-    public void createFilm(@RequestBody Film film) {
+    @Override
+    public Film create(@RequestBody Film film) {
         filmValidate(film);
         film.setId(id++);
         films.put(film.getId(), film);
         log.info("Фильм добавлен");
+        return film;
     }
 
     @PutMapping("/films")
-    public void updateFilm(@RequestBody Film film) {
+    @Override
+    public void update(@RequestBody Film film) {
         filmValidate(film);
         films.put(film.getId(), film);
         log.info("Данные о фильме обновлены");
@@ -45,17 +48,8 @@ public class FilmController {
 
     public void filmValidate(Film film) {
         try {
-            if (film.getName().isBlank()) {
-                throw new ValidationException("Название фильма не может быть пустым");
-            }
-            if (film.getDescription().length() >= 200 || film.getDescription().isBlank()) {
-                throw new ValidationException("Слишком длинное описание");
-            }
             if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new ValidationException("Слишком старый фильм");
-            }
-            if (film.getDuration() <= 0) {
-                throw new ValidationException("Неверная продолжительность фильма");
             }
         } catch (ValidationException e) {
             throw new RuntimeException(e);
