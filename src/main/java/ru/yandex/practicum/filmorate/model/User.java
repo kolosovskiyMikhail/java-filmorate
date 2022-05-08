@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 public class User {
     private int id;
 
-    @Email//(regexp = "^(.+)@(.+)$")
+    @Email
     @NotBlank
     private String email;
 

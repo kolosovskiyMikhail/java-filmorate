@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Getter
 public class UserController extends AbstractController<User>{
     private final HashMap<Integer, User> users = new HashMap<>();
 
@@ -26,7 +28,7 @@ public class UserController extends AbstractController<User>{
 
     @PostMapping("/users")
     @Override
-    public User create(@Valid @RequestBody User user) {
+    public User create(@Validated @RequestBody User user) {
         userValidate(user);
         user.setId(id++);
         users.put(user.getId(), user);
@@ -47,38 +49,13 @@ public class UserController extends AbstractController<User>{
         return LocalDate.parse(str, formatter);
     }
 
-   /* public void userValidate(User user) {
-        try {
-            if (user.getEmail().isBlank()) {
-                throw new ValidationException("Электронная почта не может быть пустой");
-            }
-            if (!user.getEmail().contains("@")) {
-                throw new ValidationException("Неверно введена электронная почта");
-            }
-            if (user.getLogin().contains(" ")) {
-                throw new ValidationException("Неверно введен логин");
-            }
-            if (dateFormatter(user.getBirthday()).isAfter(LocalDate.now())) {
-                throw new ValidationException("Дата рождения из будущего");
-            }
-            if (user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-        } catch (ValidationException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }*/
 
     public void userValidate(User user) {
-        try {
-            if (dateFormatter(user.getBirthday()).isAfter(LocalDate.now())) {
-                throw new ValidationException("Дата рождения из будущего");
-            }
-            if (user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-        } catch (ValidationException e) {
-            throw new RuntimeException(e.getMessage());
+        if (dateFormatter(user.getBirthday()).isAfter(LocalDate.now())) {
+            throw new ValidationException("Дата рождения из будущего");
+        }
+        if (user.getName().isBlank()) {
+            user.setName(user.getLogin());
         }
     }
 

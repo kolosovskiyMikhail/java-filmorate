@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.expection.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class FilmController extends AbstractController<Film> {
 
     @PostMapping("/films")
     @Override
-    public Film create(@RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         filmValidate(film);
         film.setId(id++);
         films.put(film.getId(), film);
@@ -35,7 +35,7 @@ public class FilmController extends AbstractController<Film> {
 
     @PutMapping("/films")
     @Override
-    public void update(@RequestBody Film film) {
+    public void update(@Valid @RequestBody Film film) {
         filmValidate(film);
         films.put(film.getId(), film);
         log.info("Данные о фильме обновлены");
@@ -47,12 +47,8 @@ public class FilmController extends AbstractController<Film> {
     }
 
     public void filmValidate(Film film) {
-        try {
-            if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {
-                throw new ValidationException("Слишком старый фильм");
-            }
-        } catch (ValidationException e) {
-            throw new RuntimeException(e);
+        if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Слишком старый фильм");
         }
     }
 }

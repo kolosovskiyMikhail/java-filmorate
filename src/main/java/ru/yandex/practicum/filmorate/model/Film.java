@@ -1,11 +1,10 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 
 
 @Getter
@@ -19,7 +18,7 @@ public class Film {
     @NotBlank
     private String name;
 
-    @Size(min =1, max = 200)
+    @Length(min =1, max = 200)
     @NotBlank
     private String description;
 
