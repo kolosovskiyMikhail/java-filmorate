@@ -65,6 +65,9 @@ public class UserController extends AbstractController<User>{
     @PutMapping("/users")
     @Override
     public User update(@Valid @RequestBody User user) {
+        if (user.getId() <= 0) {
+            throw new RuntimeException("Неправильно введены данные");
+        }
         User updateUser = userService.updateUser(user);
         log.info("Данные о пользователе обновлены");
         return updateUser;

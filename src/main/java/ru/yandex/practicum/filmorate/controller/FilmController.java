@@ -36,6 +36,9 @@ public class FilmController extends AbstractController<Film> {
     @PutMapping("/films")
     @Override
     public Film update(@Valid @RequestBody Film film) {
+        if (film.getId() <= 0) {
+            throw new RuntimeException("Неправильно введены данные");
+        }
         return filmService.updateFilm(film);
     }
 
