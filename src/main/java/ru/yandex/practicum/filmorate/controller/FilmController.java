@@ -1,54 +1,74 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.expection.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
 @Slf4j
 public class FilmController extends AbstractController<Film> {
-    private final HashMap<Integer, Film> films = new HashMap<>();
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     @GetMapping("/films")
     @Override
     public List<Film> getAll() {
-        return new ArrayList<>(films.values());
+        return filmService.getAllFilms();
     }
 
     @PostMapping("/films")
     @Override
     public Film create(@Valid @RequestBody Film film) {
-        filmValidate(film);
-        film.setId(id++);
-        films.put(film.getId(), film);
         log.info("Фильм добавлен");
-        return film;
+        return filmService.createFilm(film);
     }
 
     @PutMapping("/films")
     @Override
-    public void update(@Valid @RequestBody Film film) {
-        filmValidate(film);
-        films.put(film.getId(), film);
-        log.info("Данные о фильме обновлены");
+    public Film update(@Valid @RequestBody Film film) {
+        return filmService.updateFilm(film);
     }
 
-    public LocalDate dateFormatter (String str) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return LocalDate.parse(str, formatter);
-    }
-
-    public void filmValidate(Film film) {
-        if (dateFormatter(film.getReleaseDate()).isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Слишком старый фильм");
+    @PutMapping("/films/{id}/like/{userId}")
+    public void putLike(@PathVariable int id, @PathVariable int userId) {
+        if ((id <= 0) || (userId <= 0)) {
+            throw new RuntimeException("Неправильно введены данные");
         }
+        filmService.putLike(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void removeLike(@PathVariable int id, @PathVariable int userId) {
+        if ((id <= 0) || (userId <= 0)) {
+            throw new RuntimeException("Неправильно введены данные");
+        }
+        filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/films/popular")
+    public List<Film> mostPopularFilms(@RequestParam(required = false) String count) {
+        List<Film> popularList = new ArrayList<>();
+        if (!(count == null)) {
+            popularList.addAll(filmService.mostPopularFilms(Integer.parseInt(count)));
+        } else popularList.addAll(filmService.mostPopularFilms(0));
+        return popularList;
+    }
+
+    @GetMapping("/films/{id}")
+    public Film getById(@PathVariable int id) {
+        if (id <= 0) {
+            throw new RuntimeException("Неправильно введены данные");
+        }
+        return filmService.getById(id);
     }
 }

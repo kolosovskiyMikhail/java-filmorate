@@ -20,7 +20,7 @@ public abstract class AbstractController<T> {
     public abstract T create (T obj);
 
     @PutMapping
-    public abstract void update(T obj);
+    public abstract T update(T obj);
 
 
 }

@@ -6,6 +6,8 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class User {
     private int id;
+    public Set<Integer> friends = new HashSet<>();
 
     @Email
     @NotBlank

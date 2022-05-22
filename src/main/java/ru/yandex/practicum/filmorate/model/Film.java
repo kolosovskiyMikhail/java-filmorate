@@ -5,6 +5,8 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Getter
@@ -14,6 +16,8 @@ import javax.validation.constraints.NotBlank;
 
 public class Film {
     private int id;
+
+    public Set<Integer> usersWhoLiked = new HashSet<>();
 
     @NotBlank
     private String name;
@@ -32,5 +36,9 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+
+    public int likeCount() {
+        return usersWhoLiked.size();
     }
 }
