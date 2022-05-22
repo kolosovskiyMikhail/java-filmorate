@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class UserService {
@@ -46,7 +45,7 @@ public class UserService {
         List<User> commonList = new ArrayList<>();
         for (Integer u : inMemoryUserStorage.findById(userId).friends) {
             for (Integer o : inMemoryUserStorage.findById(otherId).friends) {
-                if (Objects.equals(u, o)) {
+                if (u == o) {
                     commonList.add(inMemoryUserStorage.findById(u));
                 }
             }
