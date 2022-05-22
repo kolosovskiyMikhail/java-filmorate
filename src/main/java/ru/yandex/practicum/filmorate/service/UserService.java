@@ -27,6 +27,7 @@ public class UserService {
 
     public void addFriend(int userId, int friendId) {
         inMemoryUserStorage.findById(userId).friends.add(friendId);
+        inMemoryUserStorage.findById(friendId).friends.add(userId);
     }
 
     public void removeFriend(int userId, int friendId) {
