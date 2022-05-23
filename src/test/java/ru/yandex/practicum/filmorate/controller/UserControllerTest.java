@@ -71,27 +71,5 @@ class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
-
-    @Test
-    public void friends() throws Exception {
-        mockMvc.perform(
-                        MockMvcRequestBuilders.put("/users")
-                                .content("{\"id\":1,\"email\":\"den@mail.ru\",\"login\":\"neo\",\"name\":\"Denis\",\"birthday\":\"1980-05-11\"}")
-                                .contentType(MediaType.APPLICATION_JSON));
-        mockMvc.perform(
-        MockMvcRequestBuilders.put("/users")
-                .content("{\"id\":2,\"email\":\"den@mail.ru\",\"login\":\"neo1\",\"name\":\"Denis\",\"birthday\":\"1980-05-11\"}")
-                .contentType(MediaType.APPLICATION_JSON));
-        mockMvc.perform(
-        MockMvcRequestBuilders.put("/users")
-                .content("{\"id\":3,\"email\":\"den@mail.ru\",\"login\":\"neo2\",\"name\":\"Denis\",\"birthday\":\"1980-05-11\"}")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.put("/users/1/friends/2"));
-        mockMvc.perform(
-                MockMvcRequestBuilders.put("/users/1/friends/3"));
-    }
-
 }
 
